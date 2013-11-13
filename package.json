@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/acido69/directives.git"
+    "url": "git@github.com:acido69/directives.git"
   },
   "readmeFilename": "README.md",
   "dependencies": {
