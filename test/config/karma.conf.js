@@ -4,7 +4,8 @@ module.exports = function(config){
     files : [
       'app/lib/angular.min.js',
       'test/lib/angular/angular-mocks.js',
-      'app/**/*.js',
+      'app/src/app.js',
+      'app/src/**/*.js',
       'test/unit/**/*.js',
     ],
     exclude : [],
