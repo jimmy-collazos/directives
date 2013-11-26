@@ -6,5 +6,12 @@
  * M - Comentario
  */
 app.directive('ejHelloworld', function(){
-    // your directive
+    return {
+        restrict:'EA', //por defecto biene 'A'
+        template:'{{message}}',
+        link: function(scope, element, attrs){
+            scope.message = attrs.message || 'hello world';
+            element.addClass('hola');
+        }
+    };
 });
