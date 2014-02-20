@@ -268,6 +268,89 @@ app.directive('mydirective',function() {
 </code></pre>
                     </section>
                 </section>
+                <section>
+                    <section>
+                        <h2>compile/link</h2>
+                        <p>Permite administrar el elemento al que ha sido asignado nuestra directiva</p>
+                    </section>
+                    <section>
+                        <span><small>compile/link</small></span>
+                        <h3>Ejemplo</h3>
+                        <p>modificando el DOM con jQuery</p>
+                        <pre><code class="javascript">
+var element = $('#item');
+if( element.attr('active') ){
+    element.css({color:'red'}).show();
+}else{
+    element.hide();
+}
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>compile/link</small></span>
+                        <h3>Ejemplo</h3>
+                        <p>Modificando el DOM con una directiva</p>
+                        <pre><code class="javascript">
+app.directive('item',function() {
+  var mydirectiveConfiguration = {
+    link: function(scope, iElement, attrs){
+        if(attrs.active){
+            iElement.css({color:'red'}).show();
+        }else{
+            iElement.hide();
+        }
+    }
+  };
+  return mydirectiveConfiguration;
+});
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>compile/link</small></span>
+                        <h3>Estructura</h3>
+                        <p>Diferentes alias/formas de definir este parámentro</p>
+<pre><code class="javascript">
+{
+    //...
+    compile: function compile(tElement, tAttrs, transclude) {
+      return {
+        pre: function preLink(scope, iElement, iAttrs, controller) { ... },
+        post: function postLink(scope, iElement, iAttrs, controller) { ... }
+      }
+      // or
+      // return function postLink( ... ) { ... }
+    },
+    // or
+    // link: {
+    //  pre: function preLink(scope, iElement, iAttrs, controller) { ... },
+    //  post: function postLink(scope, iElement, iAttrs, controller) { ... }
+    // }
+    // or
+    // link: function postLink( ... ) { ... }
+}
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>compile/link</small></span>
+                        <h3>Proceso de compilación</h3>
+                        <p>
+                            <img src="images/link-html.jpg" /><br/>
+                            <img src="images/link-animation.gif" />
+                        </p>
+                        <span style="background:#b0b0b0; padding: 0 5px">
+                            <span style="color:red">prelink</span> &nbsp;&nbsp;&nbsp; <span style="color:green">postlink</span>
+                        </span>
+                    </section>
+
+<!--
+                    * se usa para modificar partes del DOM
+                    * antiguamente era el "controlador" ya que no existía la atributo "controller"
+                    * tiene varias versiones cortas
+                    * la versión principal usa el patrón de factoria (para poder tener un closure)
+                    explicar el pre y el post
+                    para que sirve cada uno y las diferencias que hay en cada uno
+-->
+                </section>
             </div>
 
         </div>
