@@ -341,15 +341,225 @@ app.directive('item',function() {
                             <span style="color:red">prelink</span> &nbsp;&nbsp;&nbsp; <span style="color:green">postlink</span>
                         </span>
                     </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>controller</h2>
+                        <p>será nuestra "clase" dentro de la directiva con opción a compartir su instancia</p>
+                    </section>
+                    <section>
+                        <span><small>controller</small></span>
+                        <h3>Uso basico</h3>
+                        <p>como namespace para ordenar el código dentro de nuestra directiva</p>
+<pre><code class="javascript">
+app.directive('btn', function(){
+  return {
+    scope:true,
+    controller: function($scope){
+      this.text = '';
+      this.log = function(){
+        console.log(this.text, ' - estado actual: ', $scope.selected?'activo':'inactivo');
+      }
+    },
+    link:function(scope, iElement, iAttrs, ctrl){
+      scope.selected = false;
+      ctrl.text = iElement.text();
+      scope.toogle = function(){
+        scope.selected = !scope.selected;
+        ctrl.log();
+      };
 
-<!--
-                    * se usa para modificar partes del DOM
-                    * antiguamente era el "controlador" ya que no existía la atributo "controller"
-                    * tiene varias versiones cortas
-                    * la versión principal usa el patrón de factoria (para poder tener un closure)
-                    explicar el pre y el post
-                    para que sirve cada uno y las diferencias que hay en cada uno
--->
+    }
+  }
+});
+</code></pre>
+<a href="http://plnkr.co/edit/ChyoU0Zu3BgiZJjAiMWJ?p=preview" target="_blank">plnkr.co/edit/ChyoU0Zu3BgiZJjAiMWJ</a>
+                    </section>
+                    <section>
+                        <span><small>controller</small></span>
+                        <h3>Uso compartido</h3>
+                        <p>dejar que otras directivas puedan usar la instancia de nuestro controllador</p>
+<pre><code class="javascript">
+app.directive('btns', function(){
+  return {
+    scope:{},
+    controller:function($scope){
+      var buttons = [];
+      this.active = function(button){
+        angular.forEach(buttons, function(button) {
+          button.selected = false;
+        });
+        button.selected = true;
+      };
+      this.addButton = function(button){
+        buttons.push(button);
+      }
+    }
+  }
+});
+
+app.directive('btn', function(){
+  return {
+    scope:true,
+    require:'^btns',
+    link:function(scope, iElement, iAttrs, btnsController){
+      btnsController.addButton(scope);
+      scope.active = function(){
+        btnsController.active(scope)
+      }
+    }
+  }
+});
+</code></pre>
+<a href="http://plnkr.co/edit/LFWh8R1scQJrzfKiNe7d?p=preview" target="_blank">plnkr.co/edit/LFWh8R1scQJrzfKiNe7d</a>
+                    </section>
+                    <!--
+                    el controllador lo podemos usar como una clase, que se instanciará con el Scope de la directiva y lo usaremos para
+                    ordernar nuestro código y así tener los métodos que vayamos a usar de una manera más orgnizada
+
+                    dentro del controller vamos a meter todas las funcionalidades comunes que queremos usar en nuestras directivas
+                    Recomiendo que los métodos mejor usarlos como prototipos.
+                    Dentro del controllador nos llega una referencia al scope que se vaya a usar en nuestas directivas; dentro de éste scope
+                    podemos meter métodos comunes que vayan a interactuar con nuestras directivas.
+                    (ejemplo de los tabs)
+                    -->
+                </section>
+                <section>
+                    <section>
+                        <h2>require</h2>
+                        <p>recupera controladores de otras directivas</p>
+                    </section>
+                    <section>
+                        <span><small>require</small></span>
+                        <h3>Sintaxis basada en prefijos</h3>
+<pre><code class="javascript">require:'miOtraDirectiva' // ['miOtraDirectiva'],
+//...
+link:function(scope, iElement, iAttrs, miOtraDirectivaController){}
+</code></pre>
+                        <ul class="small" style="font-size:60%">
+                            <li>
+                                Podemos llamar a N controlladores,
+                                sólo tenemos que asiganar un Array con todas las directivas que se necesiten
+                            </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <span><small>require : prefijo</small></span>
+                        <h3>Sin prefijo</h3>
+                        <p>Obliga que que la directiva esté en el mismo elemento</p>
+<pre><code class="html">
+<span counter item />
+</code></pre>
+<pre><code class="javascript">
+app.directive('item', function(){
+  return {
+    require:'counter' // ['counter']
+    //...
+  }
+});
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>require : prefijo</small></span>
+                        <h3>?</h3>
+                        <p>La directiva no es obligartorio y en caso de no existir devuelve un NULL como valor del controlador</p>
+<pre><code class="html">
+<span counter item ></span>
+<span item ></span>
+</code></pre>
+<pre><code class="javascript">
+app.directive('item', function(){
+  return {
+    require:'?counter' // ['?counter']
+    //...
+  }
+});
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>require : prefijo</small></span>
+                        <h3>^</h3>
+                        <p>Obliga a que la directiva esté en un elemento padre</p>
+<pre><code class="html">
+<span counter> <span item ></span> </span>
+</code></pre>
+<pre><code class="javascript">
+app.directive('item', function(){
+  return {
+    require:'^counter' // ['^counter']
+    //...
+  }
+});
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>require : prefijo</small></span>
+                        <h3>?^</h3>
+                        <p>La directiva padre no es obligatoria y en caso de no existir devuelve un NULL como valor del controlador</p>
+<pre><code class="html">
+<span counter> <span item ></span> </span>
+<span item ></span>
+</code></pre>
+<pre><code class="javascript">
+app.directive('item', function(){
+  return {
+    require:'?^counter' // ['?^counter']
+    //...
+  }
+});
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>require</small></span>
+                        <h3>Ejemplo</h3>
+<pre><code class="javascript">
+app.directive('counter', function(){
+  return {
+    controller: function($scope){
+        this.plus = function(){
+            $scope.total++;
+        }
+    }
+    //.....
+  }
+});
+
+app.directive('item', function(){
+  return {
+    require:'^counter',
+    link:function(scope, iElement, iAttrs, counterController){
+      counterController.plus();
+    }
+  }
+});
+</code></pre>
+<a href="http://plnkr.co/edit/Y4p7102Exa3CiOAMaYff?p=preview" target="_blank">plnkr.co/edit/Y4p7102Exa3CiOAMaYff</a>
+                    </section>
+
+                </section>
+                <section>
+                    <section>
+                        <h2>priority</h2>
+                        <p></p>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>template/templateUrl</h2>
+                        <p></p>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>replace</h2>
+                        <p></p>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>transclude</h2>
+                        <p></p>
+                    </section>
                 </section>
             </div>
 
