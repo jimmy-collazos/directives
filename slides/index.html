@@ -580,13 +580,62 @@ app.directive('dos',function(){
                 <section>
                     <section>
                         <h2>template/templateUrl</h2>
-                        <p></p>
+                        <p>Incluyendo plantillas en nuestra directiva</p>
+<pre><code class="javascript">//...
+template: '<div></div>', // or // function(tElement, tAttrs) { ... },
+// or
+// templateUrl: 'directive.html', // or // function(tElement, tAttrs) { ... }
+//...
+</code></pre>
+                    </section>
+                    <section>
+                        <span><small>template/templateUrl</small></span>
+                        <h3>HTML Compiler</h3>
+<pre><code class="javascript">var html = '<div ng-bind="exp"></div>';
+
+// Step 1: parse HTML into DOM element
+var template = angular.element(html);
+
+// Step 2: compile the template
+var linkFn = $compile(template);
+
+// Step 3: link the compiled template with the scope.
+var element = linkFn(scope);
+
+// Step 4: Append to DOM (optional)
+parent.appendChild(element);</code></pre>
+                    </section>
+                    <section>
+                        <span><small>template/templateUrl</small></span>
+                        <h3>Ejemplo</h3>
+<pre><code class="javascript">app.directive('test2', function(){
+  return {
+    template:'<ul class="list-group">'+
+      '<li class="list-group-item" ng-repeat="animal in animales">'+
+        '<span class="badge">{{animal.total}}</span>'+
+        '{{animal.name}}'+
+      '</li>'+
+    '</ul>',
+    link:function($scope){
+      $scope.animales = [
+        {name:'Perros', total:'10'},
+        {name:'Gatos', total:'15'},
+        {name:'Peces', total:'20'}
+      ];
+    }
+  };
+});</code></pre>
+<a href="http://plnkr.co/edit/DTTsBkF3RDgGEjBP9wsL?p=preview" target="_blank">plnkr.co/edit/DTTsBkF3RDgGEjBP9wsL</a>
                     </section>
                 </section>
                 <section>
                     <section>
                         <h2>replace</h2>
-                        <p></p>
+                        <p>¿Reemplazamos el elemento, de nuestra directiva, con el template?</p>
+<pre><code class="javascript">//...
+replace:false,
+//...</code></pre>
+<a href="http://plnkr.co/edit/DTTsBkF3RDgGEjBP9wsL?p=preview" target="_blank">plnkr.co/edit/DTTsBkF3RDgGEjBP9wsL</a>
                     </section>
                 </section>
                 <section>
